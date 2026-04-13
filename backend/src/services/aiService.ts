@@ -63,4 +63,39 @@ export const aiService = {
       throw error;
     }
   },
+
+  async generateEmailDraft(name: string, brief: string, chatHistory: any[]) {
+    try {
+      const historyText = chatHistory
+        .map(m => `${m.role === 'user' ? 'Recruiter' : 'NEXUS_Core'}: ${m.content}`)
+        .join("\n");
+
+      const prompt = `
+        <TASK>
+        Draft a highly professional, concise, and enthusiastic email from the perspective of a recruiter named "${name}" to Dwarika Kumar (an Elite Full-Stack & AI Architect).
+        </TASK>
+
+        <INPUT_DATA>
+        Recruiter Name: ${name}
+        Opportunity Brief: ${brief}
+        Recent Context from Chat:
+        ${historyText}
+        </INPUT_DATA>
+
+        <CONSTRAINTS>
+        - Write from the RECRUITER'S perspective (e.g., "I enjoyed our talk about...", "I'm impressed by...").
+        - If chat history mentions specific projects (like CodeWeavers or MockMate), mention them naturally.
+        - Tone: Modern, professional, and signal-driven.
+        - Length: Max 150 words.
+        - Return ONLY the raw body text of the email. No "Subject:" or "Dear..." headers.
+        </CONSTRAINTS>
+      `;
+
+      const response = await (model as any).invoke(prompt);
+      return response.content;
+    } catch (error) {
+      console.error("Draft Generation Error:", error);
+      throw error;
+    }
+  }
 };

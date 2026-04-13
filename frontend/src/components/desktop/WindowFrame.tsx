@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils/cn';
 import { useWindowManager, AppId } from '@/context/WindowContext';
+import { useMobile } from '@/hooks/useMobile';
 
 interface WindowFrameProps {
   id: AppId;
@@ -16,6 +17,16 @@ interface WindowFrameProps {
 export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
   ({ id, title, children, zIndex, isFocused }, ref) => {
     const { closeWindow, minimizeWindow, focusWindow } = useWindowManager();
+    const isMobile = useMobile();
+
+    const mobileStyles = isMobile ? {
+      width: '100vw',
+      height: 'calc(100vh - 48px)', // Adjust for taskbar
+      top: 0,
+      left: 0,
+      margin: 0,
+      borderRadius: 0,
+    } : {};
 
     return (
       <motion.div
@@ -24,11 +35,12 @@ export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
         transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-        style={{ zIndex }}
+        style={{ zIndex, ...mobileStyles }}
         onClick={() => focusWindow(id)}
         className={cn(
           "absolute inset-0 m-auto w-[80%] h-[80%] bg-[#0A1628]/80 backdrop-blur-xl border border-white/10 rounded-lg shadow-2xl overflow-hidden flex flex-col",
-          isFocused ? "ring-1 ring-[var(--nexus-accent)] shadow-[0_0_30px_rgba(0,212,255,0.15)]" : "opacity-90"
+          isFocused ? "ring-1 ring-[var(--nexus-accent)] shadow-[0_0_30px_rgba(0,212,255,0.15)]" : "opacity-90",
+          isMobile && "border-none shadow-none ring-0"
         )}
       >
         {/* Title Bar */}

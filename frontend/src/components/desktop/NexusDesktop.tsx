@@ -8,7 +8,9 @@ import { WindowFrame } from './WindowFrame';
 import { TerminalApp } from './TerminalApp';
 import { ProjectVault } from './ProjectVault';
 import { AIChat } from './AIChat';
+import { ContactApp } from './ContactApp';
 import { AnimatePresence } from 'framer-motion';
+import { useMobile } from '@/hooks/useMobile';
 
 export function NexusDesktop() {
   return (
@@ -20,6 +22,7 @@ export function NexusDesktop() {
 
 function DesktopShell() {
   const { windows, activeWindowId } = useWindowManager();
+  const isMobile = useMobile();
 
   return (
     <div className="relative w-full h-full bg-[#050A14] overflow-hidden">
@@ -48,6 +51,7 @@ function DesktopShell() {
                 {win.id === 'terminal' && <TerminalApp />}
                 {win.id === 'ai-chat' && <AIChat />}
                 {win.id === 'projects' && <ProjectVault />}
+                {win.id === 'contact' && <ContactApp />}
                 {win.id === 'bio' && (
                   <div className="p-8 text-[var(--nexus-text)] overflow-auto h-full">
                     <h2 className="text-3xl font-bold mb-6 tracking-tighter">DWARIKA KUMAR</h2>

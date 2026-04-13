@@ -85,6 +85,7 @@ function StartMenu({ onClose }: { onClose: () => void }) {
     { id: 'bio', title: 'Identity.bio', category: 'USER' },
     { id: 'projects', title: 'Project Archives', category: 'USER' },
     { id: 'ai-chat', title: 'Concierge AI', category: 'AI' },
+    { id: 'contact', title: 'Trans-Comm Protocol', category: 'PROTO' },
     { id: 'socials', title: 'Neural Links', category: 'EXTERNAL' },
   ];
 

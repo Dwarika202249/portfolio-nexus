@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
-export type AppId = 'terminal' | 'bio' | 'projects' | 'settings' | 'ai-chat' | 'socials';
+export type AppId = 'terminal' | 'bio' | 'projects' | 'settings' | 'ai-chat' | 'socials' | 'contact';
 
 export interface WindowState {
   id: AppId;
@@ -32,6 +32,7 @@ const INITIAL_WINDOWS: Record<AppId, WindowState> = {
   settings: { id: 'settings', title: 'System Settings', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 10 },
   'ai-chat': { id: 'ai-chat', title: 'Concierge AI', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 10 },
   socials: { id: 'socials', title: 'Neural Links', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 10 },
+  contact: { id: 'contact', title: 'Trans-Comm Protocol', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 10 },
 };
 
 export function WindowProvider({ children }: { children: ReactNode }) {

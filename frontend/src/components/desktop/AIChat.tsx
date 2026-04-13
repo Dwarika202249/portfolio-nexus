@@ -2,25 +2,19 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils/cn';
-
-interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-}
+import { useNeuralCore } from '@/context/NeuralContext';
 
 const SUGGESTIONS = [
   "Why should I hire Dwarika?",
   "Tell me about CodeWeavers RBAC.",
-  "How does MockMate AI work?",
-  "Performance optimization secrets?",
+  "Tell me your skills and projects that you have made",
+  "what did you worked in your previous company?",
   "Professional achievements?",
   "Contact coordinates?"
 ];
 
 export function AIChat() {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'SYSTEM: Identity confirmed. Synchronizing neural knowledge base... Welcome. I am the NEXUS Core, Dwarika\'s Digital Proxy. How can I assist you in navigating the archives?' }
-  ]);
+  const { messages, addMessage } = useNeuralCore();
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -35,7 +29,7 @@ export function AIChat() {
     if (!userMessage || isLoading) return;
 
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    addMessage({ role: 'user', content: userMessage });
     setIsLoading(true);
 
     try {
@@ -46,14 +40,14 @@ export function AIChat() {
       });
 
       const data = await response.json();
-      
+
       if (data.answer) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.answer }]);
+        addMessage({ role: 'assistant', content: data.answer });
       } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: "ERROR: Signal lost. Could not retrieve archive data." }]);
+        addMessage({ role: 'assistant', content: "ERROR: Signal lost. Could not retrieve archive data." });
       }
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: "CRITICAL_ERROR: Backend neural engine unreachable." }]);
+      addMessage({ role: 'assistant', content: "CRITICAL_ERROR: Backend neural engine unreachable." });
     } finally {
       setIsLoading(false);
     }
@@ -71,8 +65,8 @@ export function AIChat() {
           <span className="text-[9px] uppercase tracking-[0.2em] text-[var(--nexus-accent)] font-bold">NEXUS Core // PROXY_V1.0</span>
         </div>
         <div className="flex items-center gap-3">
-            <span className="text-[8px] text-white/20 uppercase tracking-widest">Neural Link: ACTIVE</span>
-            <span className="text-[8px] text-white/20 uppercase tracking-widest">LATENCY: 4MS</span>
+          <span className="text-[8px] text-white/20 uppercase tracking-widest">Neural Link: ACTIVE</span>
+          <span className="text-[8px] text-white/20 uppercase tracking-widest">LATENCY: 4MS</span>
         </div>
       </div>
 
@@ -88,8 +82,8 @@ export function AIChat() {
             </span>
             <div className={cn(
               "p-4 rounded-xl leading-relaxed text-[11px] transition-all duration-300",
-              m.role === 'user' 
-                ? "bg-[var(--nexus-accent)] text-[#050A14] rounded-tr-none font-bold shadow-[0_4px_15px_rgba(0,212,255,0.1)]" 
+              m.role === 'user'
+                ? "bg-[var(--nexus-accent)] text-[#050A14] rounded-tr-none font-bold shadow-[0_4px_15px_rgba(0,212,255,0.1)]"
                 : "bg-white/5 border border-white/10 text-[var(--nexus-text)] rounded-tl-none whitespace-pre-wrap backdrop-blur-sm"
             )}>
               {m.content}
@@ -103,9 +97,9 @@ export function AIChat() {
               <div className="flex gap-1.5 items-center">
                 <span className="text-[9px] text-[var(--nexus-accent)] animate-pulse">DECRYPTING ARCHIVES</span>
                 <div className="flex gap-1">
-                    <div className="w-1 h-1 bg-[var(--nexus-accent)] animate-bounce" />
-                    <div className="w-1 h-1 bg-[var(--nexus-accent)] animate-bounce [animation-delay:0.2s]" />
-                    <div className="w-1 h-1 bg-[var(--nexus-accent)] animate-bounce [animation-delay:0.4s]" />
+                  <div className="w-1 h-1 bg-[var(--nexus-accent)] animate-bounce" />
+                  <div className="w-1 h-1 bg-[var(--nexus-accent)] animate-bounce [animation-delay:0.2s]" />
+                  <div className="w-1 h-1 bg-[var(--nexus-accent)] animate-bounce [animation-delay:0.4s]" />
                 </div>
               </div>
             </div>
@@ -118,23 +112,23 @@ export function AIChat() {
       <div className="mt-auto p-4 space-y-4 border-t border-white/5 bg-white/[0.02] z-10 backdrop-blur-md">
         {/* Chips / Suggestions */}
         <div className="flex flex-wrap gap-2">
-            {SUGGESTIONS.map((s) => (
-                <button
-                    key={s}
-                    onClick={() => handleSubmit(undefined, s)}
-                    disabled={isLoading}
-                    className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[9px] text-[var(--nexus-text-muted)] hover:border-[var(--nexus-accent)] hover:text-[var(--nexus-accent)] hover:bg-[var(--nexus-accent)]/5 transition-all uppercase tracking-tighter"
-                >
-                    {s}
-                </button>
-            ))}
+          {SUGGESTIONS.map((s) => (
+            <button
+              key={s}
+              onClick={() => handleSubmit(undefined, s)}
+              disabled={isLoading}
+              className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[9px] text-[var(--nexus-text-muted)] hover:border-[var(--nexus-accent)] hover:text-[var(--nexus-accent)] hover:bg-[var(--nexus-accent)]/5 transition-all uppercase tracking-tighter"
+            >
+              {s}
+            </button>
+          ))}
         </div>
 
         {/* Input Field */}
         <form onSubmit={handleSubmit} className="relative group">
           <div className="flex items-center gap-3 bg-black/40 border border-white/10 rounded-lg overflow-hidden px-4 ring-1 ring-white/5 group-focus-within:ring-[var(--nexus-accent)]/50 group-focus-within:border-[var(--nexus-accent)]/30 transition-all duration-300">
             <span className="text-[10px] text-[var(--nexus-accent)] font-bold animate-pulse">»</span>
-            <input 
+            <input
               autoFocus
               className="flex-1 bg-transparent border-none outline-none py-4 text-[11px] text-[var(--nexus-text)] placeholder:text-white/10 font-mono tracking-wide"
               value={input}
@@ -142,15 +136,15 @@ export function AIChat() {
               placeholder="Interrogate neural knowledge base..."
               disabled={isLoading}
             />
-            <button 
-                type="submit" 
-                disabled={!input.trim() || isLoading}
-                className={cn(
-                    "text-[9px] font-bold uppercase tracking-widest transition-all px-3 py-1 rounded",
-                    input.trim() ? "text-[var(--nexus-accent)] opacity-100" : "text-white/10 opacity-50"
-                )}
+            <button
+              type="submit"
+              disabled={!input.trim() || isLoading}
+              className={cn(
+                "text-[9px] font-bold uppercase tracking-widest transition-all px-3 py-1 rounded",
+                input.trim() ? "text-[var(--nexus-accent)] opacity-100" : "text-white/10 opacity-50"
+              )}
             >
-                EXEC_STMT
+              EXEC_STMT
             </button>
           </div>
         </form>
