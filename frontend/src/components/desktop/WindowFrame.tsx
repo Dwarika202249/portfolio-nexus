@@ -38,7 +38,7 @@ export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
         style={{ zIndex, ...mobileStyles }}
         onClick={() => focusWindow(id)}
         className={cn(
-          "absolute inset-0 m-auto w-[80%] h-[80%] bg-[#0A1628]/80 backdrop-blur-xl border border-white/10 rounded-lg shadow-2xl overflow-hidden flex flex-col",
+          "absolute inset-0 m-auto w-[80%] h-[80%] bg-[#0A1628]/80 backdrop-blur-xl border border-white/10 rounded-lg shadow-2xl overflow-hidden flex flex-col pointer-events-auto",
           isFocused ? "ring-1 ring-[var(--nexus-accent)] shadow-[0_0_30px_rgba(0,212,255,0.15)]" : "opacity-90",
           isMobile && "border-none shadow-none ring-0"
         )}

@@ -11,6 +11,7 @@ import { AIChat } from './AIChat';
 import { ContactApp } from './ContactApp';
 import { IdentityBio } from './IdentityBio';
 import { SocialLinks } from './SocialLinks';
+import { SettingsApp } from './SettingsApp';
 import { AnimatePresence } from 'framer-motion';
 import { useMobile } from '@/hooks/useMobile';
 
@@ -38,7 +39,7 @@ function DesktopShell() {
       <DesktopGrid />
 
       {/* Active Windows */}
-      <div className="relative z-10 w-full h-[calc(100%-48px)]">
+      <div className="relative z-10 w-full h-[calc(100%-48px)] pointer-events-none">
         <AnimatePresence mode='popLayout'>
           {Object.values(windows).map(win => (
             win.isOpen && !win.isMinimized && (
@@ -56,6 +57,7 @@ function DesktopShell() {
                 {win.id === 'contact' && <ContactApp />}
                 {win.id === 'bio' && <IdentityBio />}
                 {win.id === 'socials' && <SocialLinks />}
+                {win.id === 'settings' && <SettingsApp />}
                 {/* Fallback for other apps */}
                 {win.id !== 'terminal' && win.id !== 'bio' && win.id !== 'ai-chat' && win.id !== 'projects' && (
                   <div className="h-full flex flex-col items-center justify-center grayscale opacity-50">

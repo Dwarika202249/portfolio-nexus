@@ -101,6 +101,7 @@ function StartMenu({ onClose }: { onClose: () => void }) {
     { id: 'ai-chat', title: 'Concierge AI', category: 'AI' },
     { id: 'contact', title: 'Trans-Comm Protocol', category: 'PROTO' },
     { id: 'socials', title: 'Neural Links', category: 'EXTERNAL' },
+    { id: 'settings', title: 'System Settings', category: 'SYSTEM' },
   ];
 
   return (
