@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { motion, useDragControls } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils/cn';
 import { useWindowManager, AppId } from '@/context/WindowContext';
 
@@ -13,74 +13,60 @@ interface WindowFrameProps {
   children: React.ReactNode;
 }
 
-export function WindowFrame({ id, title, zIndex, isFocused, children }: WindowFrameProps) {
-  const { closeWindow, minimizeWindow, focusWindow } = useWindowManager();
-  const dragControls = useDragControls();
-  const constraintsRef = useRef(null);
+export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
+  ({ id, title, children, zIndex, isFocused }, ref) => {
+    const { closeWindow, minimizeWindow, focusWindow } = useWindowManager();
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95, y: 10 }}
-      drag
-      dragControls={dragControls}
-      dragListener={false}
-      dragMomentum={false}
-      onPointerDown={() => focusWindow(id)}
-      style={{ zIndex }}
-      className={cn(
-        "absolute top-20 left-40 w-[800px] h-[500px] bg-[#0A1628]/90 backdrop-blur-xl border rounded-lg shadow-2xl flex flex-col overflow-hidden",
-        isFocused ? "border-[#1A2E4A] shadow-[var(--nexus-accent)]/10" : "border-white/5 opacity-80"
-      )}
-    >
-      {/* Title Bar */}
-      <div
-        onPointerDown={(e) => dragControls.start(e)}
-        className="h-9 px-4 flex items-center justify-between bg-white/5 border-b border-white/5 cursor-grab active:cursor-grabbing select-none"
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+        style={{ zIndex }}
+        onClick={() => focusWindow(id)}
+        className={cn(
+          "absolute inset-0 m-auto w-[80%] h-[80%] bg-[#0A1628]/80 backdrop-blur-xl border border-white/10 rounded-lg shadow-2xl overflow-hidden flex flex-col",
+          isFocused ? "ring-1 ring-[var(--nexus-accent)] shadow-[0_0_30px_rgba(0,212,255,0.15)]" : "opacity-90"
+        )}
       >
-        <div className="flex items-center gap-3">
-          <div className="flex gap-1.5">
-            <button
-              title='close'
-              onClick={(e) => { e.stopPropagation(); closeWindow(id); }}
-              className="w-3 h-3 rounded-full bg-red-500/50 hover:bg-red-500 transition-colors"
-            />
-            <button
-              title='minimize'
-              onClick={(e) => { e.stopPropagation(); minimizeWindow(id); }}
-              className="w-3 h-3 rounded-full bg-yellow-500/50 hover:bg-yellow-500 transition-colors"
-            />
-            <button title='maximize' className="w-3 h-3 rounded-full bg-green-500/50 hover:bg-green-500 transition-colors" />
+        {/* Title Bar */}
+        <div className="h-10 bg-white/5 border-b border-white/10 flex items-center justify-between px-4 cursor-default select-none">
+          <div className="flex items-center gap-2">
+            <div className={cn("w-2 h-2 rounded-full", isFocused ? "bg-[var(--nexus-accent)]" : "bg-white/20")} />
+            <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--nexus-text-muted)]">{title}</span>
           </div>
-          <span className="text-[10px] font-bold tracking-[0.2em] text-[var(--nexus-text-muted)] uppercase">
-            {title}
-          </span>
+          
+          <div className="flex items-center gap-3">
+            <button onClick={(e) => { e.stopPropagation(); minimizeWindow(id); }} className="hover:text-white transition-colors">
+              <span className="text-lg leading-none opacity-50 hover:opacity-100">−</span>
+            </button>
+            <button onClick={(e) => { e.stopPropagation(); closeWindow(id); }} className="hover:text-red-400 transition-colors">
+              <span className="text-lg leading-none opacity-50 hover:opacity-100">×</span>
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 text-[10px] font-mono text-white/20">
-          <span>{id.toUpperCase()}</span>
-          <div className="w-1 h-3 bg-white/10" />
-          <span>V1.0</span>
+        {/* Content Area */}
+        <div className="flex-1 overflow-hidden relative">
+          {children}
+          
+          {/* Scanline Overlay */}
+          <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,118,0.06))] bg-[length:100%_2px,3px_100%] z-50" />
         </div>
-      </div>
 
-      {/* Content Area */}
-      <div className="flex-1 overflow-auto bg-[var(--nexus-bg)]/50 relative">
-        {children}
-
-        {/* CRT Overlay inside window (optional, for vibes) */}
-        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.05)_50%),linear-gradient(90deg,rgba(255,0,0,0.01),rgba(0,255,0,0.005),rgba(0,0,255,0.01))] bg-[length:100%_2px,2px_100%]" />
-      </div>
-
-      {/* Footer / Status Bar */}
-      <div className="h-6 px-3 flex items-center justify-between bg-white/5 border-t border-white/5 text-[9px] font-mono text-[var(--nexus-text-muted)]">
-        <span>STATUS: NOMINAL</span>
-        <div className="flex items-center gap-4">
-          <span>LNG: TS/JSX</span>
-          <span>LATENCY: 4MS</span>
+        {/* Status Bar */}
+        <div className="h-6 px-3 flex items-center justify-between bg-white/5 border-t border-white/5 text-[9px] font-mono text-[var(--nexus-text-muted)]">
+            <span>STATUS: NOMINAL</span>
+            <div className="flex items-center gap-4">
+                <span>LNG: TS/JSX</span>
+                <span>LATENCY: 4MS</span>
+            </div>
         </div>
-      </div>
-    </motion.div>
-  );
-}
+      </motion.div>
+    );
+  }
+);
+
+WindowFrame.displayName = 'WindowFrame';
