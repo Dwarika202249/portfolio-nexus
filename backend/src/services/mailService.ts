@@ -20,7 +20,7 @@ export const mailService = {
     try {
       const { data, error } = await resend.emails.send({
         from: 'NEXUS Concierge <onboarding@resend.dev>',
-        to: ['codeweavers.dk@gmail.com'], // Using your clarified Dev account
+        to: [process.env.CONTACT_RECEIVER_EMAIL || 'codeweavers.dk@gmail.com'], // Dynamic signal coordinate
         replyTo: email, // Direct signal callback
         subject: `[NEXUS OPPORTUNITY] ${name} // Neural Archives`,
         html: `
