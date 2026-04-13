@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useRef, useState, useMemo } from 'react';
+
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Float, Text, MeshDistortMaterial, OrbitControls, Stars, PerspectiveCamera } from '@react-three/drei';
+import { EffectComposer, Bloom, DepthOfField, Noise, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { PROJECTS } from '@/data/projects';
 import { Project } from '@/types/project';
-import { useWindowManager } from '@/context/WindowContext';
 
 export function ProjectVault() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -18,18 +19,20 @@ export function ProjectVault() {
 
   return (
     <div className="w-full h-full bg-[#050A14] relative">
-      <Canvas shadows>
-        <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={50} />
+      <Canvas shadows dpr={[1, 2]}>
+        <PerspectiveCamera makeDefault position={[0, 0, 15]} fov={50} />
+        
+        {/* Cinematic Camera Rig */}
+        <Rig selectedProject={selectedProject} />
 
         {/* ENHANCED LIGHTING */}
-        <ambientLight intensity={0.8} />
-        <pointLight position={[10, 10, 10]} intensity={2} color="#00D4FF" />
-        <pointLight position={[-10, -10, -10]} intensity={1} color="#FF0080" />
+        <ambientLight intensity={0.4} />
+        <pointLight position={[10, 10, 10]} intensity={1.5} color="#00D4FF" />
         <spotLight position={[0, 10, 0]} angle={0.3} penumbra={1} intensity={2} castShadow />
 
         {/* SPATIAL HELPERS */}
         <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-        <gridHelper args={[20, 20, "#1A2E4A", "#0A1628"]} position={[0, -2, 0]} />
+        <gridHelper args={[40, 40, "#1A2E4A", "#0A1628"]} position={[0, -4, 0]} rotation={[Math.PI / 2, 0, 0]} />
 
         {/* Project Nodes */}
         {PROJECTS.map((project) => (
@@ -42,12 +45,24 @@ export function ProjectVault() {
         ))}
 
         <OrbitControls
-          enablePan={true}
-          enableZoom={true}
-          maxDistance={20}
-          minDistance={3}
+          enablePan={!selectedId}
+          enableZoom={!selectedId}
+          maxDistance={30}
+          minDistance={5}
           makeDefault
         />
+
+        {/* Post-Processing Layer */}
+        <EffectComposer enableNormalPass={false}>
+          <Bloom luminanceThreshold={1} mipmapBlur intensity={0.5} radius={0.4} />
+          <DepthOfField 
+            focusDistance={0} 
+            focalLength={0.02} 
+            bokehScale={2} 
+          />
+          <Noise opacity={0.05} />
+          <Vignette offset={0.1} darkness={1.1} />
+        </EffectComposer>
       </Canvas>
 
       {/* Overlay UI for selected project */}
@@ -67,7 +82,7 @@ export function ProjectVault() {
             <div>
               <span className="text-[9px] text-white/40 block mb-2 uppercase">Core Diagnostics</span>
               <div className="grid grid-cols-2 gap-2">
-                {selectedProject.metrics?.map(m => (
+                {selectedProject.metrics?.map((m: any) => (
                   <div key={m.label} className="bg-white/5 p-2 rounded border border-white/5">
                     <div className="text-[8px] text-white/40 truncate">{m.label}</div>
                     <div className="text-[10px] text-[var(--nexus-accent)] font-bold">{m.value}</div>
@@ -79,7 +94,7 @@ export function ProjectVault() {
             <div>
               <span className="text-[9px] text-white/40 block mb-2 uppercase">Neural Stack</span>
               <div className="flex flex-wrap gap-1">
-                {selectedProject.techStack.map(t => (
+                {selectedProject.techStack.map((t: string) => (
                   <span key={t} className="text-[9px] px-2 py-0.5 bg-[var(--nexus-accent)]/10 text-[var(--nexus-accent)] rounded border border-[var(--nexus-accent)]/20">
                     {t}
                   </span>
@@ -103,6 +118,25 @@ export function ProjectVault() {
   );
 }
 
+function Rig({ selectedProject }: { selectedProject: Project | undefined }) {
+  const { camera, mouse } = useThree();
+  const vec = new THREE.Vector3();
+
+  return useFrame((state) => {
+    if (selectedProject) {
+      // Focus on selected project
+      const [x, y, z] = selectedProject.position as [number, number, number];
+      camera.position.lerp(vec.set(x, y + 1, z + 6), 0.05);
+      camera.lookAt(x, y, z);
+    } else {
+      // General orbit/hover
+      const t = state.clock.getElapsedTime();
+      camera.position.lerp(vec.set(Math.sin(t * 0.1) * 2 + mouse.x * 2, Math.cos(t * 0.1) * 2 + mouse.y * 2, 15), 0.05);
+      camera.lookAt(0, 0, 0);
+    }
+  });
+}
+
 function ProjectNode({ project, onSelect, isSelected }: { project: Project; onSelect: (id: string | null) => void; isSelected: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
@@ -120,6 +154,11 @@ function ProjectNode({ project, onSelect, isSelected }: { project: Project; onSe
 
   return (
     <group position={project.position as [number, number, number]}>
+      {/* Neural Pulse - Glows only when selected */}
+      {isSelected && (
+        <pointLight intensity={2} distance={5} color="#00D4FF" />
+      )}
+      
       <Float speed={2} rotationIntensity={1} floatIntensity={1}>
         <mesh
           ref={meshRef}
