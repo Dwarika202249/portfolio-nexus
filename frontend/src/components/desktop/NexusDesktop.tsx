@@ -10,6 +10,7 @@ import { ProjectVault } from './ProjectVault';
 import { AIChat } from './AIChat';
 import { ContactApp } from './ContactApp';
 import { IdentityBio } from './IdentityBio';
+import { SocialLinks } from './SocialLinks';
 import { AnimatePresence } from 'framer-motion';
 import { useMobile } from '@/hooks/useMobile';
 
@@ -54,6 +55,7 @@ function DesktopShell() {
                 {win.id === 'projects' && <ProjectVault />}
                 {win.id === 'contact' && <ContactApp />}
                 {win.id === 'bio' && <IdentityBio />}
+                {win.id === 'socials' && <SocialLinks />}
                 {/* Fallback for other apps */}
                 {win.id !== 'terminal' && win.id !== 'bio' && win.id !== 'ai-chat' && win.id !== 'projects' && (
                   <div className="h-full flex flex-col items-center justify-center grayscale opacity-50">

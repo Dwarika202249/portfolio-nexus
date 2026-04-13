@@ -42,8 +42,14 @@ export function IdentityBio() {
       {/* Bio Header Section */}
       <div className="flex items-start justify-between border-b border-white/5 pb-8 relative z-10">
         <div className="flex gap-6">
-          <div className="w-24 h-24 bg-gradient-to-br from-[var(--nexus-accent)]/20 to-transparent border border-[var(--nexus-accent)]/30 rounded flex items-center justify-center relative overflow-hidden group">
-            <span className="text-4xl filter grayscale group-hover:grayscale-0 transition-all duration-500">👤</span>
+          <div className="w-24 h-24 bg-gradient-to-br from-[var(--nexus-accent)]/20 to-transparent border border-[var(--nexus-accent)]/30 rounded flex items-center justify-center relative overflow-hidden group shadow-[0_0_20px_rgba(0,212,255,0.1)]">
+            <img 
+              src="/dwarika.png" 
+              alt="Dwarika Kumar" 
+              className="w-full h-full object-cover filter brightness-90 contrast-110 group-hover:brightness-100 transition-all duration-500"
+            />
+            {/* Holographic Overlays */}
+            <div className="absolute inset-0 bg-[var(--nexus-accent)]/5 mix-blend-overlay pointer-events-none" />
             <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px] pointer-events-none" />
           </div>
           <div className="flex flex-col justify-center">

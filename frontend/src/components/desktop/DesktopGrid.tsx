@@ -9,6 +9,7 @@ const DESKTOP_ITEMS: { id: AppId; title: string; icon: string }[] = [
   { id: 'projects', title: 'Archives', icon: '📁' },
   { id: 'terminal', title: 'Terminal', icon: '⌨️' },
   { id: 'ai-chat', title: 'Concierge.AI', icon: '🧠' },
+  { id: 'socials', title: 'Neural.Links', icon: '🔗' },
 ];
 
 export function DesktopGrid() {
