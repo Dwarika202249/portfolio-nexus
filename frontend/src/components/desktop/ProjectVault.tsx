@@ -12,30 +12,39 @@ import { Project } from '@/types/project';
 export function ProjectVault() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const selectedProject = useMemo(() =>
-    PROJECTS.find(p => p.id === selectedId),
-    [selectedId]
-  );
+  const selectedProject = useMemo(() => {
+    if (!PROJECTS) return undefined;
+    console.log("[NEXUS_DEBUG] Selection_Update:", selectedId);
+    return PROJECTS.find(p => p.id === selectedId);
+  }, [selectedId]);
+
+  // Diagnostic: Check if component mounts
+  React.useEffect(() => {
+    if (PROJECTS) {
+      console.log("[NEXUS_DEBUG] Vault_Mounted // Projects_Count:", PROJECTS.length);
+    } else {
+      console.warn("[NEXUS_DEBUG] Vault_Mounted // Error: PROJECTS_DATA_UNDEFINED");
+    }
+  }, []);
 
   return (
     <div className="w-full h-full bg-[#050A14] relative">
-      <Canvas shadows dpr={[1, 2]}>
+      <Canvas shadows dpr={[1, 1]}> {/* Locking dpr to 1 for max compatibility */}
         <PerspectiveCamera makeDefault position={[0, 0, 15]} fov={50} />
         
         {/* Cinematic Camera Rig */}
         <Rig selectedProject={selectedProject} />
 
-        {/* ENHANCED LIGHTING */}
-        <ambientLight intensity={0.4} />
-        <pointLight position={[10, 10, 10]} intensity={1.5} color="#00D4FF" />
-        <spotLight position={[0, 10, 0]} angle={0.3} penumbra={1} intensity={2} castShadow />
-
+        {/* BASIC LIGHTING */}
+        <ambientLight intensity={1.5} />
+        <pointLight position={[10, 10, 10]} intensity={2.5} color="#00D4FF" />
+        
         {/* SPATIAL HELPERS */}
         <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
         <gridHelper args={[40, 40, "#1A2E4A", "#0A1628"]} position={[0, -4, 0]} rotation={[Math.PI / 2, 0, 0]} />
 
         {/* Project Nodes */}
-        {PROJECTS.map((project) => (
+        {PROJECTS && PROJECTS.map((project) => (
           <ProjectNode
             key={project.id}
             project={project}
@@ -51,18 +60,6 @@ export function ProjectVault() {
           minDistance={5}
           makeDefault
         />
-
-        {/* Post-Processing Layer */}
-        <EffectComposer enableNormalPass={false}>
-          <Bloom luminanceThreshold={1} mipmapBlur intensity={0.5} radius={0.4} />
-          <DepthOfField 
-            focusDistance={0} 
-            focalLength={0.02} 
-            bokehScale={2} 
-          />
-          <Noise opacity={0.05} />
-          <Vignette offset={0.1} darkness={1.1} />
-        </EffectComposer>
       </Canvas>
 
       {/* Overlay UI for selected project */}
@@ -94,7 +91,7 @@ export function ProjectVault() {
             <div>
               <span className="text-[9px] text-white/40 block mb-2 uppercase">Neural Stack</span>
               <div className="flex flex-wrap gap-1">
-                {selectedProject.techStack.map((t: string) => (
+                {selectedProject.techStack?.map((t: string) => (
                   <span key={t} className="text-[9px] px-2 py-0.5 bg-[var(--nexus-accent)]/10 text-[var(--nexus-accent)] rounded border border-[var(--nexus-accent)]/20">
                     {t}
                   </span>
@@ -130,7 +127,7 @@ function Rig({ selectedProject }: { selectedProject: Project | undefined }) {
       camera.lookAt(x, y, z);
     } else {
       // General orbit/hover
-      const t = state.clock.getElapsedTime();
+      const t = state.clock.elapsedTime;
       camera.position.lerp(vec.set(Math.sin(t * 0.1) * 2 + mouse.x * 2, Math.cos(t * 0.1) * 2 + mouse.y * 2, 15), 0.05);
       camera.lookAt(0, 0, 0);
     }
@@ -146,8 +143,8 @@ function ProjectNode({ project, onSelect, isSelected }: { project: Project; onSe
       meshRef.current.rotation.x += 0.005;
       meshRef.current.rotation.y += 0.005;
 
-      // Gentle floating motion
-      const t = state.clock.getElapsedTime();
+      // Gentle floating motion - Using internal elapsed time for stability
+      const t = state.clock.elapsedTime;
       meshRef.current.position.y = (project.position?.[1] || 0) + Math.sin(t + (project.position?.[0] || 0)) * 0.2;
     }
   });
@@ -170,13 +167,13 @@ function ProjectNode({ project, onSelect, isSelected }: { project: Project; onSe
           <icosahedronGeometry args={[1, 15]} />
           <MeshDistortMaterial
             color={isSelected ? "#00D4FF" : hovered ? "#00E5FF" : "#1A2E4A"}
-            distort={0.4}
-            speed={5}
-            roughness={0.2}
-            metalness={0.8}
-            emissive={isSelected ? "#00D4FF" : "#000000"}
-            emissiveIntensity={isSelected ? 0.5 : 0}
-            opacity={0.8}
+            distort={0.45}
+            speed={4}
+            roughness={0.1}
+            metalness={0.9}
+            emissive={isSelected ? "#00D4FF" : hovered ? "#0066FF" : "#000000"}
+            emissiveIntensity={isSelected ? 1.5 : hovered ? 0.8 : 0}
+            opacity={0.9}
             transparent
           />
         </mesh>
@@ -187,7 +184,6 @@ function ProjectNode({ project, onSelect, isSelected }: { project: Project; onSe
         position={[0, -1.5, 0]}
         fontSize={0.2}
         color={isSelected || hovered ? "white" : "#4A5D71"}
-        font="/fonts/geist-mono/GeistMono-Variable.woff2"
         anchorX="center"
         anchorY="middle"
       >

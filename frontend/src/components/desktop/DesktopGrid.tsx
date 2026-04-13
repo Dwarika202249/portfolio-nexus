@@ -33,7 +33,7 @@ function DesktopIcon({ id, title, icon, index }: { id: AppId; title: string; ico
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 + 0.5 }}
-      onDoubleClick={() => openWindow(id, title)}
+      onClick={() => openWindow(id, title)}
       className="w-20 flex flex-col items-center gap-1 group p-2 rounded-lg hover:bg-white/5 active:bg-white/10 transition-colors"
     >
       <div className="relative w-12 h-12 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">

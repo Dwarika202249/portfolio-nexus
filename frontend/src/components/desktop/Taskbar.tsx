@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils/cn';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Taskbar() {
-  const { windows, activeWindowId, focusWindow, openWindow } = useWindowManager();
+  const { windows, activeWindowId, focusWindow, closeWindow } = useWindowManager();
   const [isStartOpen, setIsStartOpen] = useState(false);
 
   const activeWindows = Object.values(windows).filter(w => w.isOpen);
@@ -14,7 +14,7 @@ export function Taskbar() {
   return (
     <div className="fixed bottom-0 left-0 right-0 h-12 bg-[#0A1628]/80 backdrop-blur-md border-t border-[#1A2E4A] z-[1000] flex items-center px-4 gap-2">
       {/* Start Button */}
-      <button 
+      <button
         onClick={() => setIsStartOpen(!isStartOpen)}
         className={cn(
           "h-full px-4 flex items-center justify-center gap-2 hover:bg-white/5 transition-colors group",
@@ -33,24 +33,38 @@ export function Taskbar() {
       {/* Active Windows */}
       <div className="flex-1 flex items-center gap-1 overflow-x-auto no-scrollbar">
         {activeWindows.map(win => (
-          <button
+          <div
             key={win.id}
-            onClick={() => focusWindow(win.id)}
             className={cn(
-              "h-9 px-3 min-w-[120px] flex items-center gap-2 rounded transition-all text-left",
-              activeWindowId === win.id 
-                ? "bg-[var(--nexus-accent)]/20 border-b-2 border-[var(--nexus-accent)]" 
+              "group relative h-9 px-3 min-w-[120px] flex items-center gap-2 rounded transition-all text-left cursor-pointer",
+              activeWindowId === win.id
+                ? "bg-[var(--nexus-accent)]/20 border-b-2 border-[var(--nexus-accent)]"
                 : "hover:bg-white/5 text-[var(--nexus-text-muted)]"
             )}
+            onClick={() => focusWindow(win.id)}
           >
             <div className={cn(
               "w-2 h-2 rounded-full",
               activeWindowId === win.id ? "bg-[var(--nexus-accent)]" : "bg-[#1A2E4A]"
             )} />
-            <span className="text-[11px] truncate font-medium uppercase tracking-tighter">
+            <span className="text-[11px] truncate font-medium uppercase tracking-tighter flex-1">
               {win.title}
             </span>
-          </button>
+
+            {/* Quick Close Button */}
+            <button
+              title='Close'
+              onClick={(e) => {
+                e.stopPropagation();
+                closeWindow(win.id);
+              }}
+              className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded-sm transition-opacity"
+            >
+              <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         ))}
       </div>
 
@@ -90,7 +104,7 @@ function StartMenu({ onClose }: { onClose: () => void }) {
   ];
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 10, scale: 0.95 }}

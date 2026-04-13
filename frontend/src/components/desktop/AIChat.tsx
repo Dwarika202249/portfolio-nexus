@@ -73,7 +73,7 @@ export function AIChat() {
 
       {/* Messages */}
       <div className="flex-1 overflow-auto p-4 space-y-6 no-scrollbar z-10">
-        {messages.map((m, i) => (
+        {messages?.map((m, i) => (
           <div key={i} className={cn(
             "flex flex-col gap-2 max-w-[85%]",
             m.role === 'user' ? "ml-auto items-end" : "items-start"
