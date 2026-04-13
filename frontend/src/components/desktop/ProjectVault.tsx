@@ -8,28 +8,36 @@ import { EffectComposer, Bloom, DepthOfField, Noise, Vignette } from '@react-thr
 import * as THREE from 'three';
 import { PROJECTS } from '@/data/projects';
 import { Project } from '@/types/project';
+import { cn } from '@/lib/utils/cn';
 
 export function ProjectVault() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [isDecrypting, setIsDecrypting] = useState(false);
 
   const selectedProject = useMemo(() => {
     if (!PROJECTS) return undefined;
-    console.log("[NEXUS_DEBUG] Selection_Update:", selectedId);
     return PROJECTS.find(p => p.id === selectedId);
   }, [selectedId]);
 
-  // Diagnostic: Check if component mounts
-  React.useEffect(() => {
-    if (PROJECTS) {
-      console.log("[NEXUS_DEBUG] Vault_Mounted // Projects_Count:", PROJECTS.length);
-    } else {
-      console.warn("[NEXUS_DEBUG] Vault_Mounted // Error: PROJECTS_DATA_UNDEFINED");
+  const handleDecrypt = () => {
+    const link = selectedProject?.links?.live || selectedProject?.links?.github;
+    if (!link) {
+      console.warn("[NEXUS_DEBUG] Archive_Error // DATA_LINK_NULL");
+      return;
     }
-  }, []);
+
+    setIsDecrypting(true);
+    
+    // Neural sequence delay
+    setTimeout(() => {
+      window.open(link, '_blank');
+      setIsDecrypting(false);
+    }, 1500);
+  };
 
   return (
     <div className="w-full h-full bg-[#050A14] relative">
-      <Canvas shadows dpr={[1, 1]}> {/* Locking dpr to 1 for max compatibility */}
+      <Canvas shadows dpr={[1, 1]}>
         <PerspectiveCamera makeDefault position={[0, 0, 15]} fov={50} />
         
         {/* Cinematic Camera Rig */}
@@ -100,8 +108,22 @@ export function ProjectVault() {
             </div>
           </div>
 
-          <button className="mt-6 w-full py-2 bg-[var(--nexus-accent)] text-[#050A14] text-[10px] font-bold uppercase tracking-widest hover:bg-[#00E5FF] transition-colors rounded shadow-[0_0_15px_rgba(0,212,255,0.3)]">
-            Decrypt Archives →
+          <button 
+            disabled={isDecrypting}
+            onClick={handleDecrypt}
+            className={cn(
+              "mt-6 w-full py-2 text-[#050A14] text-[10px] font-bold uppercase tracking-widest transition-all rounded shadow-lg overflow-hidden relative",
+              isDecrypting 
+                ? "bg-[var(--nexus-accent)]/50 cursor-wait animate-pulse" 
+                : "bg-[var(--nexus-accent)] hover:bg-[#00E5FF] shadow-[0_0_15px_rgba(0,212,255,0.3)]"
+            )}
+          >
+            {isDecrypting && (
+              <div className="absolute inset-0 bg-white/20 animate-[ping_0.5s_infinite]" />
+            )}
+            <span className="relative z-10">
+              {isDecrypting ? "Sequencing Arch_Uplink..." : "Decrypt Archives →"}
+            </span>
           </button>
         </div>
       )}

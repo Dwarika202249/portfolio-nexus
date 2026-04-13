@@ -12,6 +12,10 @@ export const PROJECTS: Project[] = [
       { label: 'Role Types', value: 'Admin/College/Student' },
       { label: 'Record Capacity', value: '5000+' }
     ],
+    links: {
+      github: 'https://github.com/Dwarika202249',
+      live: 'https://github.com/Dwarika202249'
+    },
     position: [-2, 1, 0]
   },
   {
@@ -25,6 +29,10 @@ export const PROJECTS: Project[] = [
       { label: 'Latency', value: '<800ms' },
       { label: 'Accuracy', value: '94%' }
     ],
+    links: {
+      github: 'https://github.com/Dwarika202249',
+      live: 'https://github.com/Dwarika202249'
+    },
     position: [0, 2, -1]
   },
   {
@@ -38,6 +46,10 @@ export const PROJECTS: Project[] = [
       { label: 'SLA Improvement', value: '40%' },
       { label: 'User Rating', value: '4.8/5' }
     ],
+    links: {
+      github: 'https://github.com/Dwarika202249',
+      live: 'https://github.com/Dwarika202249'
+    },
     position: [2, 1, 0]
   }
 ];
