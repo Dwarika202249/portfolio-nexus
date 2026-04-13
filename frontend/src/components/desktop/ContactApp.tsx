@@ -35,16 +35,6 @@ export function ContactApp() {
     body: useRef<HTMLDivElement>(null),
   };
 
-  const startDrafting = () => {
-    const summary = `Greetings, I am drafting a specialized transmission for Dwarika based on your inquiry. 
-    
-    You are reaching out regarding a potential collaboration/opportunity. I have captured your contact coordinates at ${formData.email} and summarized the objective: "${formData.brief}".
-    
-    My creator, Dwarika, is currently optimized for innovative Full-Stack and AI solutions. I will transmit this data to his primary neural inbox immediately.`;
-    
-    setAiSummary(summary);
-    setStage('DRAFT');
-  };
 
   useEffect(() => {
     if (stage === 'DRAFT' && draftRefs.to.current) {
@@ -65,6 +55,7 @@ export function ContactApp() {
         .to(draftRefs.subject.current, { text: `[OPPORTUNITY] Transmission from ${formData.name}`, duration: 1.5, ease: "none" }, "+=0.3")
         .to(draftRefs.body.current, { text: aiSummary, duration: 3.5, ease: "none" }, "+=0.3");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage, aiSummary, formData.name]);
 
   const handleFinalSend = async () => {
@@ -167,7 +158,7 @@ My creator, Dwarika, is currently optimized for innovative Full-Stack and AI sol
             <div className="text-center">
               <h3 className="text-xl font-bold text-white mb-2">SIGNAL_RECEIVED</h3>
               <p className="text-[10px] text-[var(--nexus-text-muted)] max-w-xs uppercase leading-loose">
-                Your transmission has been encrypted and delivered to Dwarika's primary neural hub. 
+                Your transmission has been encrypted and delivered to Dwarika&apos;s primary neural hub. 
                 He will recalibrate for a callback soon.
               </p>
             </div>
@@ -204,6 +195,7 @@ function DraftingView({ formData, aiSummary, onSend, isSending }: any) {
       .to(refs.body.current, { text: aiSummary, duration: 4, ease: "none" }, "+=0.2");
 
     return () => { tl.kill(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.name, aiSummary]);
 
   return (
