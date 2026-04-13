@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
+import Image from 'next/image';
 
 const SKILLS = [
   { name: 'MERN_STACK', level: 95, category: 'CORE' },
@@ -43,9 +44,11 @@ export function IdentityBio() {
       <div className="flex items-start justify-between border-b border-white/5 pb-8 relative z-10">
         <div className="flex gap-6">
           <div className="w-24 h-24 bg-gradient-to-br from-[var(--nexus-accent)]/20 to-transparent border border-[var(--nexus-accent)]/30 rounded flex items-center justify-center relative overflow-hidden group shadow-[0_0_20px_rgba(0,212,255,0.1)]">
-            <img 
+            <Image 
               src="/dwarika.png" 
               alt="Dwarika Kumar" 
+              width={96}
+              height={96}
               className="w-full h-full object-cover filter brightness-90 contrast-110 group-hover:brightness-100 transition-all duration-500"
             />
             {/* Holographic Overlays */}
@@ -76,7 +79,7 @@ export function IdentityBio() {
               Primary_Directives
             </h3>
             <p className="text-[var(--nexus-text-muted)] leading-relaxed italic border-l border-white/10 pl-4">
-              "Mastering the intersection of high-performance architecture and neural intelligence. My mission is to build digital ecosystems that are as resilient as they are beautiful."
+              &quot;Mastering the intersection of high-performance architecture and neural intelligence. My mission is to build digital ecosystems that are as resilient as they are beautiful.&quot;
             </p>
           </div>
 
