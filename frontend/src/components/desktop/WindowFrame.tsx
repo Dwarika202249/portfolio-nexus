@@ -16,13 +16,13 @@ interface WindowFrameProps {
 
 export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
   ({ id, title, children, zIndex, isFocused }, ref) => {
-    const { closeWindow, minimizeWindow, focusWindow, updateWindowSpatial, windows } = useWindowManager();
+    const { closeWindow, minimizeWindow, focusWindow, toggleMaximize, updateWindowSpatial, windows } = useWindowManager();
     const isMobile = useMobile();
     const win = windows[id];
 
     // Dragging Logic
     const handleDragStart = (e: React.MouseEvent) => {
-      if (isMobile) return;
+      if (isMobile || win.isMaximized) return;
       e.preventDefault();
       focusWindow(id);
       
@@ -51,6 +51,7 @@ export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
 
     // Resizing Logic (8-way)
     const handleResizeStart = (e: React.MouseEvent, direction: string) => {
+      if (win.isMaximized) return;
       e.preventDefault();
       e.stopPropagation();
       focusWindow(id);
@@ -93,7 +94,17 @@ export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
       document.addEventListener('mouseup', onMouseUp);
     };
 
-    const desktopStyles = !isMobile ? {
+    const desktopStyles = !isMobile ? (win.isMaximized ? {
+      left: 0,
+      top: 0,
+      width: '100vw',
+      height: 'calc(100vh - 48px)',
+      position: 'absolute' as const,
+      margin: 0,
+      zIndex,
+      borderRadius: 0,
+      border: 'none',
+    } : {
       left: win.x,
       top: win.y,
       width: win.width,
@@ -101,7 +112,7 @@ export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
       position: 'absolute' as const,
       margin: 0,
       zIndex,
-    } : { zIndex };
+    }) : { zIndex };
 
     const mobileStyles = isMobile ? {
       width: '100vw',
@@ -124,11 +135,11 @@ export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
         className={cn(
           "bg-[#0A1628]/80 backdrop-blur-xl border border-white/10 rounded-lg shadow-2xl overflow-hidden flex flex-col pointer-events-auto",
           isFocused ? "ring-1 ring-[var(--nexus-accent)] shadow-[0_0_30px_rgba(0,212,255,0.15)]" : "opacity-90",
-          isMobile && "border-none shadow-none ring-0"
+          (isMobile || win.isMaximized) && "border-none shadow-none ring-0"
         )}
       >
-        {/* Resize Handles (Desktop Only) */}
-        {!isMobile && (
+        {/* Resize Handles (Desktop Only & Non-Maximized) */}
+        {!isMobile && !win.isMaximized && (
           <>
             <div className="absolute top-0 left-0 w-full h-1 cursor-ns-resize z-[60]" onMouseDown={(e) => handleResizeStart(e, 'n')} />
             <div className="absolute bottom-0 left-0 w-full h-1 cursor-ns-resize z-[60]" onMouseDown={(e) => handleResizeStart(e, 's')} />
@@ -148,7 +159,10 @@ export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
         {/* Title Bar */}
         <div 
           onMouseDown={handleDragStart}
-          className="h-10 bg-white/5 border-b border-white/10 flex items-center justify-between px-4 cursor-move select-none active:cursor-grabbing"
+          className={cn(
+            "h-10 bg-white/5 border-b border-white/10 flex items-center justify-between px-4 select-none",
+            (!isMobile && !win.isMaximized) ? "cursor-move active:cursor-grabbing" : "cursor-default"
+          )}
         >
           <div className="flex items-center gap-2">
             <div className={cn("w-2 h-2 rounded-full", isFocused ? "bg-[var(--nexus-accent)]" : "bg-white/20")} />
@@ -156,10 +170,29 @@ export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
           </div>
           
           <div className="flex items-center gap-3">
-            <button onClick={(e) => { e.stopPropagation(); minimizeWindow(id); }} className="hover:text-white transition-colors relative z-[80]">
+            <button onClick={(e) => { e.stopPropagation(); minimizeWindow(id); }} title="Minimize" className="hover:text-white transition-colors relative z-[80]">
               <span className="text-lg leading-none opacity-50 hover:opacity-100">−</span>
             </button>
-            <button onClick={(e) => { e.stopPropagation(); closeWindow(id); }} className="hover:text-red-400 transition-colors relative z-[80]">
+            
+            {!isMobile && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); toggleMaximize(id); }} 
+                title={win.isMaximized ? "Restore" : "Maximize"}
+                className="hover:text-white transition-colors relative z-[80] flex items-center justify-center pt-0.5"
+              >
+                {win.isMaximized ? (
+                    <svg className="w-2.5 h-2.5 opacity-50 hover:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" />
+                    </svg>
+                ) : (
+                    <svg className="w-2.5 h-2.5 opacity-50 hover:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                    </svg>
+                )}
+              </button>
+            )}
+
+            <button onClick={(e) => { e.stopPropagation(); closeWindow(id); }} title="Close" className="hover:text-red-400 transition-colors relative z-[80]">
               <span className="text-lg leading-none opacity-50 hover:opacity-100">×</span>
             </button>
           </div>
@@ -178,7 +211,7 @@ export const WindowFrame = React.forwardRef<HTMLDivElement, WindowFrameProps>(
             <span>STATUS: NOMINAL</span>
             <div className="flex items-center gap-4">
                 <span>LNG: TS/JSX</span>
-                <span>POS: {Math.round(win.x)},{Math.round(win.y)}</span>
+                <span>{win.isMaximized ? "MODE: FULL_SCREEN" : `POS: ${Math.round(win.x)},${Math.round(win.y)}`}</span>
             </div>
         </div>
       </motion.div>

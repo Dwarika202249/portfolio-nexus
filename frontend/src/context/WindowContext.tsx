@@ -24,6 +24,7 @@ interface WindowContextType {
   closeWindow: (id: AppId) => void;
   minimizeWindow: (id: AppId) => void;
   focusWindow: (id: AppId) => void;
+  toggleMaximize: (id: AppId) => void;
   updateWindowSpatial: (id: AppId, spatial: Partial<{ x: number; y: number; width: number; height: number }>) => void;
   maxZIndex: number;
 }
@@ -96,6 +97,14 @@ export function WindowProvider({ children }: { children: ReactNode }) {
     if (activeWindowId === id) setActiveWindowId(null);
   }, [activeWindowId]);
 
+  const toggleMaximize = useCallback((id: AppId) => {
+    setWindows(prev => ({
+      ...prev,
+      [id]: { ...prev[id], isMaximized: !prev[id].isMaximized }
+    }));
+    focusWindow(id);
+  }, [focusWindow]);
+
   const updateWindowSpatial = useCallback((id: AppId, spatial: Partial<{ x: number; y: number; width: number; height: number }>) => {
     setWindows(prev => ({
       ...prev,
@@ -111,6 +120,7 @@ export function WindowProvider({ children }: { children: ReactNode }) {
       closeWindow,
       minimizeWindow,
       focusWindow,
+      toggleMaximize,
       updateWindowSpatial,
       maxZIndex
     }}>
