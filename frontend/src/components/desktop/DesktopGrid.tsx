@@ -28,7 +28,7 @@ export function DesktopGrid() {
   return (
     <div
       onClick={handleBackgroundClick}
-      className="absolute inset-0 p-8 grid grid-flow-col grid-rows-[repeat(auto-fill,100px)] gap-4 select-none"
+      className="absolute inset-0 p-8 flex flex-col flex-wrap content-start items-start gap-4 select-none"
     >
       {DESKTOP_ITEMS.map((item, index) => (
         <DesktopIcon
