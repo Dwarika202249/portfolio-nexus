@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 import { useWindowManager, AppId } from '@/context/WindowContext';
 import { cn } from '@/lib/utils/cn';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChronosWidget } from './ChronosWidget';
 
 export function Taskbar() {
   const { windows, activeWindowId, focusWindow, closeWindow } = useWindowManager();
   const [isStartOpen, setIsStartOpen] = useState(false);
+  const [isChronosOpen, setIsChronosOpen] = useState(false);
 
   const activeWindows = Object.values(windows).filter(w => w.isOpen);
 
@@ -23,6 +25,19 @@ export function Taskbar() {
               onClick={() => setIsStartOpen(false)} 
             />
             <StartMenu onClose={() => setIsStartOpen(false)} />
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Chronos Widget Overlay */}
+      <AnimatePresence>
+        {isChronosOpen && (
+          <>
+            <div 
+              className="fixed inset-0 bg-transparent cursor-default" 
+              onClick={() => setIsChronosOpen(false)} 
+            />
+            <ChronosWidget onClose={() => setIsChronosOpen(false)} />
           </>
         )}
       </AnimatePresence>
@@ -85,10 +100,20 @@ export function Taskbar() {
         </div>
 
         {/* Sys Tray */}
-        <div className="flex items-center gap-4 px-4 text-[11px] font-mono text-[var(--nexus-text-muted)]">
+        <div 
+          onClick={() => setIsChronosOpen(!isChronosOpen)}
+          className={cn(
+            "flex items-center gap-4 px-4 text-[11px] font-mono transition-all cursor-pointer hover:bg-white/5 h-full",
+            isChronosOpen ? "text-[var(--nexus-accent)] bg-white/10" : "text-[var(--nexus-text-muted)]"
+          )}
+        >
           <div className="flex flex-col items-end">
-            <span className="text-[var(--nexus-text)]">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-            <span className="text-[9px] uppercase tracking-tighter">{new Date().toLocaleDateString([], { month: 'short', day: '2-digit' })}</span>
+            <span className={cn(isChronosOpen ? "text-[var(--nexus-accent)]" : "text-[var(--nexus-text)]")}>
+              {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>
+            <span className="text-[9px] uppercase tracking-tighter">
+              {new Date().toLocaleDateString([], { month: 'short', day: '2-digit' })}
+            </span>
           </div>
         </div>
       </div>
