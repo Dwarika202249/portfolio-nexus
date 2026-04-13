@@ -87,7 +87,7 @@ export function ContactApp() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="space-y-6 max-w-lg mx-auto w-full"
+            className="flex-1 space-y-6 max-w-lg mx-auto w-full overflow-y-auto pr-2 custom-scrollbar"
           >
             <div className="border-l-2 border-[var(--nexus-accent)] pl-4 py-2 mb-8">
               <h2 className="text-xl font-bold tracking-tighter text-white">ESTABLISH_CONTACT</h2>
