@@ -11,11 +11,12 @@ export default function Home() {
 
   useEffect(() => {
     if (isBootComplete) {
-      // Small delay to allow boot sequence exit animation to finish
       const timer = setTimeout(() => {
         setShowDesktop(true);
       }, 500);
       return () => clearTimeout(timer);
+    } else {
+      setShowDesktop(false);
     }
   }, [isBootComplete]);
 

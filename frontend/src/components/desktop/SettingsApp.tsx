@@ -1,27 +1,21 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { useBoot } from '@/context/BootContext';
 
 export function SettingsApp() {
-  const { setPhase, setProgress } = useBoot();
+  const { rebootSystem } = useBoot();
   const [activeTab, setActiveTab] = useState<'visuals' | 'diagnostics'>('visuals');
 
   const handleReboot = () => {
-    // Reset session storage to allow the animation to play again
-    sessionStorage.removeItem('nexus_boot_skipped');
-    
-    // Re-trigger the boot sequence from the official INIT state
-    setPhase('INIT');
-    setProgress(0);
+    rebootSystem();
   };
 
   return (
     <div className="h-full bg-[#050A14] font-mono p-8 flex flex-col relative overflow-hidden">
       {/* Background Atmosphere */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.01)_0%,transparent_70%)] pointer-events-none" />
-      
+
       {/* Header */}
       <div className="mb-8 border-b border-white/5 pb-4 flex justify-between items-end relative z-10">
         <div>
@@ -29,13 +23,13 @@ export function SettingsApp() {
           <p className="text-[10px] text-white/30 uppercase mt-1 tracking-widest italic">Core Configuration Interface</p>
         </div>
         <div className="flex gap-4 text-[10px] font-bold">
-          <button 
+          <button
             onClick={() => setActiveTab('visuals')}
             className={activeTab === 'visuals' ? "text-[var(--nexus-accent)]" : "text-white/20"}
           >
             VISUAL_PROT
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab('diagnostics')}
             className={activeTab === 'diagnostics' ? "text-[var(--nexus-accent)]" : "text-white/20"}
           >
@@ -83,7 +77,7 @@ export function SettingsApp() {
             {/* Reboot Protocol */}
             <div className="pt-8 mt-8 border-t border-white/5">
               <h3 className="text-[10px] text-white/30 uppercase tracking-[0.3em] mb-4">DANGER_ZONE</h3>
-              <button 
+              <button
                 onClick={handleReboot}
                 className="w-full py-4 border border-red-500/30 bg-red-500/5 text-red-500 text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-red-500/10 hover:border-red-500 transition-all rounded shadow-[0_0_20px_rgba(239,68,68,0.1)]"
               >
@@ -111,7 +105,7 @@ export function SettingsApp() {
                 <span className="text-[var(--nexus-accent)]">STABLE</span>
               </div>
             </div>
-            
+
             <div className="p-4 border border-white/5 rounded-lg opacity-30">
               <h4 className="text-[9px] text-white/40 uppercase mb-4">Neural_Stability_History</h4>
               <div className="flex items-end gap-1 h-12">

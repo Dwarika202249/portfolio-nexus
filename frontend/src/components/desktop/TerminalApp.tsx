@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useWindowManager } from '@/context/WindowContext';
+import { useBoot } from '@/context/BootContext';
 import { PROJECTS } from '@/data/projects';
 import { cn } from '@/lib/utils/cn';
 
@@ -35,6 +36,7 @@ interface TerminalLine {
 
 export function TerminalApp() {
   const { closeWindow } = useWindowManager();
+  const { rebootSystem } = useBoot();
   const [lines, setLines] = useState<TerminalLine[]>([
     { type: 'system', content: 'NEXUS OS [Version 1.0.0.42]' },
     { type: 'system', content: '(c) Dwarika Systems. All rights reserved.' },
@@ -220,7 +222,7 @@ export function TerminalApp() {
     },
     reboot: {
       desc: 'Restart the OS session',
-      action: () => { window.location.reload(); }
+      action: () => { rebootSystem(); }
     },
     exit: {
       desc: 'Terminate the current terminal process',

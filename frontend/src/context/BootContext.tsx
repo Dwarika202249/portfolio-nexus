@@ -17,6 +17,7 @@ interface BootContextType {
   setPhase: (phase: BootPhase) => void;
   setProgress: (progress: number) => void;
   skipBoot: () => void;
+  rebootSystem: () => void;
   isBootComplete: boolean;
 }
 
@@ -42,6 +43,13 @@ export function BootProvider({ children }: { children: React.ReactNode }) {
     sessionStorage.setItem('nexus_boot_skipped', 'true');
   }, []);
 
+  const rebootSystem = useCallback(() => {
+    sessionStorage.removeItem('nexus_boot_skipped');
+    setIsBootComplete(false);
+    setProgress(0);
+    setPhase('INIT');
+  }, []);
+
   useEffect(() => {
     if (phase === 'COMPLETE' || phase === 'SKIPPED') {
       setIsBootComplete(true);
@@ -50,7 +58,7 @@ export function BootProvider({ children }: { children: React.ReactNode }) {
   }, [phase]);
 
   return (
-    <BootContext.Provider value={{ phase, progress, setPhase, setProgress, skipBoot, isBootComplete }}>
+    <BootContext.Provider value={{ phase, progress, setPhase, setProgress, skipBoot, rebootSystem, isBootComplete }}>
       {children}
     </BootContext.Provider>
   );
