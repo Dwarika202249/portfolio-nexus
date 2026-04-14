@@ -10,18 +10,23 @@ import { cn } from '@/lib/utils/cn';
 const VFS: any = {
   home: {
     guest: {
+      'identity.txt': "Dwarika Kumar // Full Stack Engineer & GenAI Specialist\nBased: Noida, India\nPhilosophy: 'Systemic Resilience' — Building systems that stay working.\nMission: Architecting event-driven SaaS and deterministic AI workflows.",
+      'contact.txt': "Email: dwarika.kumar9060@gmail.com\nLinkedIn: linkedin.com/in/dwarika\nGitHub: github.com/Dwarika202249\nPhone: +91 9508562285",
+      stack: {
+        'languages.txt': "EXPERT: JavaScript (ES6+), HTML5\nADVANCED: TypeScript, CSS3/Tailwind\nPROFICIENT: Python (FastAPI/Flask)",
+        'frontend.txt': "ADVANCED: React.js (Fiber internals), Next.js (App Router), Redux Toolkit, React Query\nFAMILIAR: Framer Motion, Three.js",
+        'backend.txt': "ADVANCED: Node.js (Event Loop mastery), Express.js, REST API Design\nPROFICIENT: Socket.io, Redis Pub/Sub",
+        'neural.txt': "ADVANCED: RAG Pipelines, Prompt Engineering, Groq/OpenAI APIs\nPROFICIENT: LangChain, Whisper API"
+      },
+      career: {
+        'hcltech.txt': "Role: Frontend Engineer (Oct 2022 - Oct 2025)\nImpact: Built ServiceXchange ITSM Dashboard for 10k+ enterprise users.\nMetrics: 84% render improvement, 20% navigation speed gain via virtual scrolling & memoization.\nKey Achievement: Bidirectional eBonding sync with ServiceNow/BMC Remedy.",
+        'founder.txt': "Role: SaaS Founder & Lead Engineer\nVentures: DineOS (Restaurant OS), MockMate AI (Interview Prep), CodeWeavers (LMS).\nFocus: Solo-architecting production-grade MERN + AI platforms with sub-100ms sync."
+      },
       projects: {
-        'codeweavers.txt': 'CodeWeavers LMS: Multi-tenant Enterprise Learning OS. Built with MERN.',
-        'mockmate.txt': 'MockMate AI: Voice-First AI Interviewer using LLM chains.',
-        'servicexchange.txt': 'HCL ServiceXchange: Global Service Escalation Layer.'
-      },
-      skills: {
-        'frontend.txt': 'React, Next.js, Three.js, Tailwind, Framer Motion',
-        'backend.txt': 'Node.js, Python, FastAPI, PostgreSQL, MongoDB',
-        'neural.txt': 'OpenAI SDK, LangChain, Vector DBs'
-      },
-      'contact.txt': 'Email: contact@dwarika.nexus\nGitHub: github.com/Dwarika202249\nLinkedIn: linkedin.com/in/dwarika',
-      'secret.txt': 'NEXUS_OS_ADMIN_PROTOCOL: 0x88231'
+        'dineos.txt': "DineOS: Multi-tenant Restaurant OS. 5 roles, real-time sync, AI Concierge (RAG).",
+        'mockmate.txt': "MockMate AI: Voice-first interview simulation. SSE streaming for 91% latency reduction.",
+        'codeweavers.txt': "CodeWeavers: Enterprise LMS. 5000+ record data grids, Puppeteer-based certificates."
+      }
     }
   }
 };

@@ -188,13 +188,13 @@ function ProjectNode({ project, onSelect, isSelected }: { project: Project; onSe
         >
           <icosahedronGeometry args={[1, 15]} />
           <MeshDistortMaterial
-            color={isSelected ? "#00D4FF" : hovered ? "#00E5FF" : "#1A2E4A"}
+            color={isSelected ? "#00D4FF" : hovered ? "#00E5FF" : (project.color || "#1A2E4A")}
             distort={0.45}
             speed={4}
             roughness={0.1}
             metalness={0.9}
-            emissive={isSelected ? "#00D4FF" : hovered ? "#0066FF" : "#000000"}
-            emissiveIntensity={isSelected ? 1.5 : hovered ? 0.8 : 0}
+            emissive={isSelected ? "#00D4FF" : hovered ? "#00E5FF" : (project.color || "#000000")}
+            emissiveIntensity={isSelected ? 1.5 : hovered ? 1.0 : 0.4}
             opacity={0.9}
             transparent
           />

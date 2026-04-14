@@ -1,4 +1,15 @@
-export type ProjectCategory = 'FULLSTACK' | 'AI_ML' | 'BLOCKCHAIN' | 'OPEN_SOURCE';
+export type ProjectCategory =
+  | "FULLSTACK"
+  | "AI_ML"
+  | "BLOCKCHAIN"
+  | "OPEN_SOURCE"
+  | "SaaS_ARCHITECTURE"
+  | "AI_AGENTIC"
+  | "ENTERPRISE_SaaS"
+  | "ITSM_ENTERPRISE"
+  | "FULL_STACK_IOT"
+  | "WEB_GAMING_PWA"
+  | "MOBILE_SECURITY";
 
 export interface Project {
   id: string;
@@ -18,4 +29,5 @@ export interface Project {
   }[];
   // 3D positioning metadata (optional)
   position?: [number, number, number];
+  color?: string;
 }
